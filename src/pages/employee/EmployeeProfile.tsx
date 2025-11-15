@@ -206,7 +206,7 @@ export const EmployeeProfile = () => {
                 <Newspaper className="h-6 w-6 text-white" />
               </div>
               <div>
-  <h1 className="text-xl font-bold text-brand-700">UP Uday News</h1>
+                <h1 className="text-xl font-bold text-brand-700">NewsHub</h1>
                 <p className="text-xs text-brand-500 -mt-1">Employee Portal</p>
               </div>
             </Link>
