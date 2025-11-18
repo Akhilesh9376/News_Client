@@ -8,7 +8,7 @@ export const loginUser =
     try {
       dispatch(loginStart());
 
-      const res = await fetch(`${API_BASE_}/auth/login`, {
+      const res = await fetch(`${API_BASE_}/auth/v1/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
