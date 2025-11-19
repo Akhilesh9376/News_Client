@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
           console.warn("Token expired. Please log in again.");
           localStorage.removeItem("token");
             localStorage.removeItem("token");
-            window.location.href = "employee/login"; // force redirect
+            window.location.href = "/employee/login"; // force redirect
         } else {
           // Token valid
           config.headers.Authorization = `Bearer ${token}`;
