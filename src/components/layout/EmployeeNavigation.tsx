@@ -37,6 +37,7 @@ export const EmployeeNavigation = () => {
     }
     // Clear local token to prevent auto re-login on refresh
     localStorage.removeItem("token");
+    localStorage.removeItem("persist:root");
     dispatch(logout());
     toast({
       title: "Logged Out Successfully 👋",
@@ -44,6 +45,7 @@ export const EmployeeNavigation = () => {
       variant: "success",
     });
     navigate("/employee/login", { replace: true });
+    window.location.replace("/employee/login")
   };
 
   const navItems = [
