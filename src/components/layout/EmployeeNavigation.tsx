@@ -31,7 +31,7 @@ export const EmployeeNavigation = () => {
   const handleLogout = async () => {
     try {
       // Attempt server-side logout to invalidate token (best-effort)
-      await axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/auth/v1/logout");
     } catch (e) {
       // Ignore network errors; proceed with local logout
     }
