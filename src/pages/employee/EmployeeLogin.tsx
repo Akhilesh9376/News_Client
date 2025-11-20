@@ -36,9 +36,9 @@ export const EmployeeLogin = () => {
       });
       
       const employee = response.data.user;
-      console.log("employee:", employee);
+      
       const { token } = response.data ;
-      console.log("Employee token:", token);
+      
       localStorage.setItem("token", token); // Store token in localStorage
       dispatch(
         loginSuccess({
