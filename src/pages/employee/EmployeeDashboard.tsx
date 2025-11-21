@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Newspaper,
   ArrowLeft,
@@ -15,20 +15,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppSelector, useAppDispatch } from "@/hooks/redux";
 import { logout } from "@/store/slices/authSlice";
 import { useToast } from "@/hooks/use-toast";
+import axiosInstance from "@/config/axiosInstance";
 
 export const EmployeeDashboard = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    toast({
-      title: "Logged Out Successfully 👋",
-  description: "You have been securely logged out of UP Uday News.",
-      variant: "success",
-    });
-  };
+    const handleLogout = async () => {
+      try {
+        // Attempt server-side logout to invalidate token (best-effort)
+        await axiosInstance.post("/auth/v1/logout");
+      } catch (e) {
+        // Ignore network errors; proceed with local logout
+      }
+      // Clear local token to prevent auto re-login on refresh
+      localStorage.removeItem("token");
+      localStorage.removeItem("persist:root");
+      dispatch(logout());
+      toast({
+        title: "Logged Out Successfully 👋",
+    description: "You have been securely logged out of UP Uday News.",
+        variant: "success",
+      });
+      navigate("/employee/login", { replace: true });
+      window.location.replace("/employee/login")
+    };
 
   return (
     <div className="min-h-screen bg-background">
