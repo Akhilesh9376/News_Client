@@ -9,7 +9,7 @@ import ScrollToTop from "./components/scrollToTop/ScrollToTop.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <ScrollToTop />
+      {/* <ScrollToTop /> */}
       <App />
     </Provider>
   </StrictMode>,
