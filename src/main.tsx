@@ -4,12 +4,10 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import App from "./App.tsx";
 import "./index.css";
-import ScrollToTop from "./components/scrollToTop/ScrollToTop.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      {/* <ScrollToTop /> */}
       <App />
     </Provider>
   </StrictMode>,

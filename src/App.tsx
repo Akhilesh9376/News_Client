@@ -24,6 +24,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAppDispatch } from "@/hooks/redux";
 import { loginStart, loginSuccess, logout as logoutAction } from "@/store/slices/authSlice";
 import { jwtDecode } from "jwt-decode";
+import ScrollToTop from "./components/scrollToTop/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => {
           <Toaster />
           <Sonner position="top-right" />
           <BrowserRouter>
+          <ScrollToTop />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />

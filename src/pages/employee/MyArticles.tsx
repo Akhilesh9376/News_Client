@@ -43,6 +43,7 @@ import { useAppSelector } from "@/hooks/redux";
 import { useToast } from "@/hooks/use-toast";
 import { Article } from "@/types";
 import axiosInstance from "@/config/axiosInstance";
+import { Atom } from "react-loading-indicators";
 
 // Load employee articles from API instead of mock
 
@@ -57,6 +58,7 @@ export const MyArticles = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Server-side authored articles with pagination + filters
   const {
@@ -77,6 +79,7 @@ export const MyArticles = () => {
   useEffect(() => {
     const loadEmployeeArticles = async () => {
       try {
+        setIsLoading(true);
         const res = await axiosInstance.get("/news/mine", {
           params: {
             page: currentPage,
@@ -110,6 +113,7 @@ export const MyArticles = () => {
         }));
         setArticles(apiArticles);
         setTotalItems(res.data?.totalItems || apiArticles.length);
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch my articles", error);
         toast({
@@ -217,7 +221,7 @@ export const MyArticles = () => {
                 <Newspaper className="h-6 w-6 text-white" />
               </div>
               <div>
-  <h1 className="text-xl font-bold text-brand-700">UP Uday News</h1>
+                <h1 className="text-xl font-bold text-brand-700">UP Uday News</h1>
                 <p className="text-xs text-brand-500 -mt-1">Employee Portal</p>
               </div>
             </Link>
@@ -358,129 +362,141 @@ export const MyArticles = () => {
               <CardTitle>Articles ({totalItems})</CardTitle>
             </CardHeader>
             <CardContent>
-              {currentArticles.length > 0 ? (
-                <div className="space-y-4">
-                  {currentArticles.map((article) => (
-                    <div
-                      key={article.id}
-                      className="border rounded-lg p-4 hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Badge
-                              className={getCategoryColor(article.category)}
-                            >
-                              {article.category}
-                            </Badge>
-                            <Badge className={getStatusColor(article.status)}>
-                              <div className="flex items-center space-x-1">
-                                {getStatusIcon(article.status)}
-                                <span className="capitalize">
-                                  {article.status}
+              {isLoading ?
+                (
+                  // Loading state
+                  <main className="flex-1 flex items-center justify-center">
+                    <Atom
+                      color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]}
+                      size="large"
+                      text="Loading..."
+                    />
+                  </main>
+                ) :
+                currentArticles.length > 0 ? (
+                  <div className="space-y-4">
+                    {currentArticles.map((article) => (
+                      <div
+                        key={article.id}
+                        className="border rounded-lg p-4 hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <Badge
+                                className={getCategoryColor(article.category)}
+                              >
+                                {article.category}
+                              </Badge>
+                              <Badge className={getStatusColor(article.status)}>
+                                <div className="flex items-center space-x-1">
+                                  {getStatusIcon(article.status)}
+                                  <span className="capitalize">
+                                    {article.status}
+                                  </span>
+                                </div>
+                              </Badge>
+                            </div>
+                            <h3 className="text-lg font-semibold text-foreground">
+                              <span
+                                className="hover:text-brand-600 cursor-pointer"
+                                onClick={() => {
+                                  setSelectedArticle(article);
+                                  setViewDialogOpen(true);
+                                }}
+                              >
+                                {article.title}
+                              </span>
+                              {article.status === "approved" && (
+                                <a
+                                  href={`/article/${article.id}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-2 text-xs text-brand-500 hover:text-brand-700"
+                                >
+                                  [View Live]
+                                </a>
+                              )}
+                            </h3>
+                            <p className="text-muted-foreground line-clamp-2">
+                              {article.excerpt}
+                            </p>
+                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                              <span>
+                                Created: {formatDate(article.createdAt)}
+                              </span>
+                              <span>
+                                Updated: {formatDate(article.updatedAt)}
+                              </span>
+                              {article.publishedAt && (
+                                <span>
+                                  Published: {formatDate(article.publishedAt)}
                                 </span>
+                              )}
+                              <span>
+                                Readers: {article.views ?? 0}
+                              </span>
+                            </div>
+                            {article.rejectionReason && (
+                              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+                                <p className="text-sm text-red-800">
+                                  <strong>Rejection Reason:</strong>{" "}
+                                  {article.rejectionReason}
+                                </p>
                               </div>
-                            </Badge>
+                            )}
                           </div>
-                          <h3 className="text-lg font-semibold text-foreground">
-                            <span
-                              className="hover:text-brand-600 cursor-pointer"
+                          <div className="flex items-center space-x-2 ml-4">
+                            <Button
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
                               onClick={() => {
                                 setSelectedArticle(article);
                                 setViewDialogOpen(true);
                               }}
                             >
-                              {article.title}
-                            </span>
-                            {article.status === "approved" && (
-                              <a
-                                href={`/article/${article.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="ml-2 text-xs text-brand-500 hover:text-brand-700"
+                              <Eye className="h-4 w-4 mr-2" />
+                              View
+                            </Button>
+                            <Link to={`/employee/edit-article/${article.id}`} state={{ article }}>
+                              <Button
+                                size="sm"
+                                className="bg-amber-500 hover:bg-amber-600 text-white"
                               >
-                                [View Live]
-                              </a>
-                            )}
-                          </h3>
-                          <p className="text-muted-foreground line-clamp-2">
-                            {article.excerpt}
-                          </p>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                            <span>
-                              Created: {formatDate(article.createdAt)}
-                            </span>
-                            <span>
-                              Updated: {formatDate(article.updatedAt)}
-                            </span>
-                            {article.publishedAt && (
-                              <span>
-                                Published: {formatDate(article.publishedAt)}
-                              </span>
-                            )}
-                            <span>
-                              Readers: {article.views ?? 0}
-                            </span>
-                          </div>
-                          {article.rejectionReason && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
-                              <p className="text-sm text-red-800">
-                                <strong>Rejection Reason:</strong>{" "}
-                                {article.rejectionReason}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2 ml-4">
-                          <Button
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                            onClick={() => {
-                              setSelectedArticle(article);
-                              setViewDialogOpen(true);
-                            }}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View
-                          </Button>
-                          <Link to={`/employee/edit-article/${article.id}`} state={{ article }}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
+                            </Link>
                             <Button
                               size="sm"
-                              className="bg-amber-500 hover:bg-amber-600 text-white"
+                              className="bg-red-600 hover:bg-red-700 text-white"
+                              onClick={() => handleDelete(article.id)}
                             >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
+                              Delete
                             </Button>
-                          </Link>
-                          <Button
-                            size="sm"
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() => handleDelete(article.id)}
-                          >
-                            Delete
-                          </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <h3 className="font-semibold mb-2">No articles found</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {searchTerm || statusFilter !== "all"
-                      ? "No articles match your current filters."
-                      : "You haven't written any articles yet."}
-                  </p>
-                  <Link to="/employee/write-article">
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Write Your First Article
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="font-semibold mb-2">No articles found</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {searchTerm || statusFilter !== "all"
+                        ? "No articles match your current filters."
+                        : "You haven't written any articles yet."}
+                    </p>
+
+                    <Link to="/employee/write-article">
+                      <Button>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Write Your First Article
+                      </Button>
+                    </Link>
+                  </div>
+                )}
 
               {/* Pagination */}
               {totalPages > 1 && (
@@ -593,13 +609,13 @@ export const MyArticles = () => {
                   <div className="flex justify-end space-x-2">
                     {(selectedArticle.status === "draft" ||
                       selectedArticle.status === "rejected") && (
-                      <Link to={`/employee/edit-article/${selectedArticle.id}`} state={{ article: selectedArticle }}>
-                        <Button className="bg-amber-500 hover:bg-amber-600 text-white">
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit Article
-                        </Button>
-                      </Link>
-                    )}
+                        <Link to={`/employee/edit-article/${selectedArticle.id}`} state={{ article: selectedArticle }}>
+                          <Button className="bg-amber-500 hover:bg-amber-600 text-white">
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Article
+                          </Button>
+                        </Link>
+                      )}
                     <Button
                       variant="outline"
                       onClick={() => setViewDialogOpen(false)}

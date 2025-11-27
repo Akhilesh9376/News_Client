@@ -15,6 +15,7 @@ import {
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/pagination";
+import { Atom } from 'react-loading-indicators';
 
 
 export const HomePage = () => {
@@ -138,9 +139,15 @@ export const HomePage = () => {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <PublicHeader />
-        <main className="flex-1 container mx-auto px-4 py-16">
-          <LoadingSpinner />
+        <main className="flex-1 flex items-center justify-center">
+          {/* <LoadingSpinner /> */}
+          <Atom
+            color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]}
+            size="large"
+            text="Loading..."
+          />
         </main>
+
         <PublicFooter />
       </div>
     );
@@ -158,128 +165,128 @@ export const HomePage = () => {
           {/* News Grid */}
           <section className="py-12">
             <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Main Articles */}
-              <div className="lg:col-span-2">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">
-                      Latest News
-                    </h2>
-                    {regularArticles.length > 0 && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {regularArticles.length} more articles
-                        {filters.category && ` in ${filters.category}`}
-                      </p>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Articles */}
+                <div className="lg:col-span-2">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold text-foreground">
+                        Latest News
+                      </h2>
+                      {regularArticles.length > 0 && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {regularArticles.length} more articles
+                          {filters.category && ` in ${filters.category}`}
+                        </p>
+                      )}
+                    </div>
+                    {filters.category && (
+                      <span className="text-sm text-muted-foreground">
+                        Filtered by: {filters.category}
+                      </span>
                     )}
                   </div>
-                  {filters.category && (
-                    <span className="text-sm text-muted-foreground">
-                      Filtered by: {filters.category}
-                    </span>
+
+                  {/* Regular articles: exactly 6 per page (plus 4 featured above) */}
+                  <div className="space-y-4">
+                    {regularArticles.map((article) => (
+                      <ArticleCard key={article.id} article={article} />
+                    ))}
+                  </div>
+
+                  {/* Bottom pagination: manual load next set */}
+                  {totalPages > 1 && (
+                    <div className="mt-6">
+                      <Pagination>
+                        <PaginationContent className="flex items-center gap-4">
+                          {/* Show Back button on pages > 1 */}
+                          {page > 1 && (
+                            <PaginationItem>
+                              <Button
+                                variant="outline"
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                className="transition-transform duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
+                              >
+                                Back
+                              </Button>
+                            </PaginationItem>
+                          )}
+                          <PaginationItem>
+                            <span className="text-sm text-muted-foreground">
+                              Page {page} of {totalPages}
+                            </span>
+                          </PaginationItem>
+                          {/* Show Next button when there are more pages */}
+                          {page < totalPages && (
+                            <PaginationItem>
+                              <Button
+                                onClick={() => setPage((p) => p + 1)}
+                                className="transition-transform duration-200 hover:scale-105 active:scale-95 hover:shadow-lg bg-gradient-to-r from-brand-500 to-brand-600 text-white"
+                              >
+                                Next
+                              </Button>
+                            </PaginationItem>
+                          )}
+                        </PaginationContent>
+                      </Pagination>
+                    </div>
                   )}
                 </div>
 
-                {/* Regular articles: exactly 6 per page (plus 4 featured above) */}
-                <div className="space-y-4">
-                  {regularArticles.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-
-                {/* Bottom pagination: manual load next set */}
-                {totalPages > 1 && (
-                  <div className="mt-6">
-                    <Pagination>
-                      <PaginationContent className="flex items-center gap-4">
-                        {/* Show Back button on pages > 1 */}
-                        {page > 1 && (
-                          <PaginationItem>
-                            <Button
-                              variant="outline"
-                              onClick={() => setPage((p) => Math.max(1, p - 1))}
-                              className="transition-transform duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
-                            >
-                              Back
-                            </Button>
-                          </PaginationItem>
-                        )}
-                        <PaginationItem>
-                          <span className="text-sm text-muted-foreground">
-                            Page {page} of {totalPages}
-                          </span>
-                        </PaginationItem>
-                        {/* Show Next button when there are more pages */}
-                        {page < totalPages && (
-                          <PaginationItem>
-                            <Button
-                              onClick={() => setPage((p) => p + 1)}
-                              className="transition-transform duration-200 hover:scale-105 active:scale-95 hover:shadow-lg bg-gradient-to-r from-brand-500 to-brand-600 text-white"
-                            >
-                              Next
-                            </Button>
-                          </PaginationItem>
-                        )}
-                      </PaginationContent>
-                    </Pagination>
-                  </div>
-                )}
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Trending */}
-                <div className="bg-card rounded-lg p-6 border">
-                  <h3 className="font-semibold text-foreground mb-4">
-                    🔥 Trending
-                  </h3>
-                  <div className="space-y-3">
-                    {filteredArticles.slice(0, 3).map((article, index) => (
-                      <Link
-                        key={article.id}
-                        to={`/article/${article.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-start space-x-3 hover:bg-accent/50 p-2 rounded-lg transition-colors"
-                      >
-                        <div className="bg-brand-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-foreground leading-tight line-clamp-2 hover:text-brand-600 transition-colors">
-                            {article.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {article.author.name}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg p-6 text-white">
-                  <h3 className="font-semibold mb-4">📊 Today's Stats</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span>Articles Published</span>
-                      <span className="font-bold">
-                        {filteredArticles.length}
-                      </span>
+                {/* Sidebar */}
+                <div className="space-y-6">
+                  {/* Trending */}
+                  <div className="bg-card rounded-lg p-6 border">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      🔥 Trending
+                    </h3>
+                    <div className="space-y-3">
+                      {filteredArticles.slice(0, 3).map((article, index) => (
+                        <Link
+                          key={article.id}
+                          to={`/article/${article.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-start space-x-3 hover:bg-accent/50 p-2 rounded-lg transition-colors"
+                        >
+                          <div className="bg-brand-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium text-foreground leading-tight line-clamp-2 hover:text-brand-600 transition-colors">
+                              {article.title}
+                            </h4>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {article.author.name}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    <div className="flex justify-between">
-                      <span>Categories</span>
-                      <span className="font-bold">6</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Active Writers</span>
-                      <span className="font-bold">12</span>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="bg-gradient-to-r from-brand-500 to-brand-600 rounded-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4">📊 Today's Stats</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span>Articles Published</span>
+                        <span className="font-bold">
+                          {filteredArticles.length}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Categories</span>
+                        <span className="font-bold">6</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Active Writers</span>
+                        <span className="font-bold">12</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           </section>
         </div>

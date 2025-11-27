@@ -155,7 +155,7 @@ export const AboutPage = () => {
                   <Button variant="secondary">Email your tip</Button>
                 </a>
                 <Link to="/">
-                  <Button variant="outline" className="text-white border-white hover:bg-white hover:text-brand-700">
+                  <Button variant="default" className="text-white border-white hover:bg-white hover:text-brand-700">
                     Back to Home
                   </Button>
                 </Link>
