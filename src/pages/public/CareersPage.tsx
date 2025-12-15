@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, Clock, Mail } from "lucide-react";
-
+import { Helmet } from "react-helmet-async";
 const jobs = [
   {
     id: "reporter",
@@ -58,10 +58,15 @@ const CareersPage = () => {
     );
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   };
+  const pageTitle = "Carrier ┃ UP Uday News"
 
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={"Carrier News Latest news from UP Uday News"} />
+      </Helmet>
       <main className="container mx-auto px-4 py-10">
         <div className="mb-8 text-center">
           <Badge className="bg-brand-600">We’re Hiring</Badge>

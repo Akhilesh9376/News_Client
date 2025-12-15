@@ -23,7 +23,8 @@ import { useAppSelector } from "@/hooks/redux";
 import { useToast } from "@/hooks/use-toast";
 import { Article } from "@/types";
 import axiosInstance from "@/config/axiosInstance";
-
+import { preventCopy } from "@/hooks/preventCopy";
+import { Helmet } from "react-helmet-async";
 export const ArticleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { articles } = useAppSelector((state) => state.news);
@@ -43,7 +44,8 @@ export const ArticleDetail = () => {
   const [related, setRelated] = useState<Article[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [relatedError, setRelatedError] = useState<string | null>(null);
-
+  // call hook prevent copy
+  preventCopy();
   useEffect(() => {
     const fetchArticle = async () => {
       setIsLoading(true);
@@ -335,11 +337,18 @@ export const ArticleDetail = () => {
   }
 
   const estimatedReadTime = Math.ceil(article.content.split(" ").length / 200);
+  const pageTitle = article
+    ? `${article.title} | UP Uday News`
+    : "Article | UP Uday News";
 
   return (
+
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={article?.excerpt || "Latest news from UP Uday News"} />
+      </Helmet>
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
@@ -419,13 +428,29 @@ export const ArticleDetail = () => {
                 <Card>
                   <CardContent className="p-8" role="article" aria-labelledby="article-title">
                     <div className="prose prose-lg max-w-none">
-                      <div
+                      {/* <div
                         id="article-content"
                         className="text-foreground leading-relaxed"
                         aria-live="off"
                         dangerouslySetInnerHTML={{ __html: article.content }}
+                      /> */}
+                      <div
+                        id="article-content"
+                        className="text-foreground leading-relaxed no-copy relative"
+                        aria-live="off"
+                        dangerouslySetInnerHTML={{ __html: article.content }}
                       />
+
                     </div>
+                    <div className="pointer-events-none select-none fixed inset-0 flex items-center justify-center">
+                      <p
+                        className="text-foreground/10 text-4xl font-semibold rotate-[-30deg]"
+                        aria-hidden="true"
+                      >
+                        UP Uday News • Read Only
+                      </p>
+                    </div>
+
                   </CardContent>
                 </Card>
               </div>
@@ -519,10 +544,10 @@ export const ArticleDetail = () => {
                                   v.lang.toLowerCase().includes("hi") ||
                                   v.name.toLowerCase().includes("hindi"),
                               ) && (
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Hindi voice not detected. Try Chrome on Windows/macOS for broader voice support.
-                                </p>
-                              )}
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Hindi voice not detected. Try Chrome on Windows/macOS for broader voice support.
+                                  </p>
+                                )}
                             </div>
 
                             {/* Speed Control */}

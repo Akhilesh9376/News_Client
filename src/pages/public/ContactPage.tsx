@@ -4,15 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, MapPin, Clock, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export const ContactPage = () => {
   const phone = "+91 98765 43210";
   const email = "contact@upudaynews.com";
-
+  const pageTitle = "Contact Us ┃ UP Uday News"
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={"Contact Us Page from UP Uday News"} />
+      </Helmet>
       <main className="flex-1">
         {/* Hero with animated media image (no page animations) */}
         <section className="bg-brand-50 dark:bg-brand-950 py-16">

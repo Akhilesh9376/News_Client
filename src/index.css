@@ -147,3 +147,10 @@
     -webkit-line-clamp: 3;
   }
 }
+.no-copy {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+

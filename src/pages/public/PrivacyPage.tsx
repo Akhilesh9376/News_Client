@@ -2,11 +2,17 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const PrivacyPage = () => {
+  const pageTitle = "Privacy Page ┃ Up Uday News "
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={"Privacy Page from UP Uday News"} />
+      </Helmet>
       <main className="container mx-auto px-4 py-10">
         <div className="mb-8 text-center">
           <Shield className="h-10 w-10 mx-auto text-brand-600" />

@@ -16,6 +16,7 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import { Atom } from 'react-loading-indicators';
+import { Helmet } from "react-helmet-async";
 
 
 export const HomePage = () => {
@@ -152,11 +153,14 @@ export const HomePage = () => {
       </div>
     );
   }
-
+  const pageTitle = "Home ┇ Up Uday News"
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <PublicHeader />
-
+      <Helmet>
+         <title>{pageTitle}</title>
+        <meta name="description" content={"Home Page from UP Uday News"} />
+      </Helmet>
       <main className="flex-1">
         <div className={`transition-opacity duration-700 ease-out ${fadeIn ? "opacity-100" : "opacity-0"}`}>
           {/* Hero Slider Section */}
